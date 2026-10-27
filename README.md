@@ -104,31 +104,3 @@ source ~/tb4_gesture_ws/install/setup.bash
 ros2 topic echo /detected_gesture
 ```
 
-## Kịch bản thao tác
-
-Mỗi lựa chọn cần giữ ổn định vài khung hình. Sau đó giữ `Thumb_Up` để xác nhận:
-
-| Cử chỉ | Kết quả |
-|---|---|
-| `Wave` | Chọn robot xoay trái-phải để chào |
-| `Pointing_Up` | Chọn tiến-lùi 4 lần |
-| `Victory` | Chọn chạy một vòng quỹ đạo tròn |
-| `Thumb_Up` | Xác nhận và chạy lựa chọn |
-| `Open_Palm` | Dừng ngay, hủy hành vi đang chạy và xóa lựa chọn |
-| `Closed_Fist` | Hủy lựa chọn/hành vi và về trạng thái chờ |
-
-Ví dụ: giơ một ngón tay, chờ log `Selected`, sau đó giơ ngón cái. Với `Wave`, hãy vẫy ngang bàn tay mở đủ rõ để bộ nhận diện phân biệt với `Open_Palm` đứng yên.
-
-## Cơ chế an toàn và chống nhiễu
-
-- Gesture node chỉ công nhận một nhãn sau `stable_frames` khung hình liên tiếp.
-- Behavior node tiếp tục yêu cầu `stable_messages` bản tin giống nhau trước khi xử lý các sự kiện chọn/xác nhận/hủy.
-- Một cử chỉ giữ lâu chỉ tạo một sự kiện; phải chuyển về `None` hoặc nhãn khác rồi mới tạo sự kiện mới.
-- `Open_Palm` là đường dừng khẩn cấp và publish zero velocity ngay.
-- Nếu không nhận được heartbeat `/detected_gesture` trong `signal_timeout_s` giây, robot publish vận tốc 0 và xóa trạng thái.
-- Sau khi hành vi hoàn tất, node publish zero velocity.
-- Tốc độ mặc định thấp và bán kính quỹ đạo tròn khoảng `0.18 / 0.35 = 0.51 m`, phù hợp để chạy trong warehouse world đủ rộng. Có thể giảm tiếp trong `config/params.yaml` nếu cần.
-
-## Lưu ý khi nộp bài
-
-Ảnh/video demo nên thể hiện: cửa sổ webcam có tên cử chỉ và độ tin cậy, `ros2 topic echo /detected_gesture`, Gazebo đang chạy và log chọn/xác nhận hành vi. Không điều khiển robot bằng bàn phím trong phần demo; chỉ dùng cử chỉ tay.
